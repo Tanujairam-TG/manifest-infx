@@ -79,6 +79,7 @@
   <project path="vendor/google/gms" name="vendor_gapps" remote="infinity-gitea" clone-depth="1" />
   <project path="vendor/support" name="vendor_support" remote="infinity" />
   <project path="vendor/extras" name="vendor_extras" remote="infinity" />
+  <project path="vendor/bcr" name="Chaitanyakm/vendor_bcr" remote="github" revision="main" />
   <project path="vendor/infinity" name="vendor_infinity" remote="infinity" />
   <project path="vendor/qcom/opensource/usb" name="vendor_qcom_opensource_usb" groups="qcom,kailua-vendor" remote="infinity" />
 

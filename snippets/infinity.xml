@@ -67,6 +67,7 @@
   <project path="packages/apps/PocketMode" name="packages_apps_PocketMode" remote="infinity" />
   <project path="packages/services/DeviceAsWebcam" name="packages_services_DeviceAsWebcam" groups="pdk-cw-fs,pdk-fs" remote="infinity" />
   <project path="packages/services/Telecomm" name="packages_services_Telecomm" groups="pdk-cw-fs,pdk-fs" remote="infinity" />
+  <project path="packages/services/OmniJaws" name="packages_services_OmniJaws" remote="infinity" />
 
   <!-- system -->
   <project path="system/core" name="system_core" remote="infinity" />

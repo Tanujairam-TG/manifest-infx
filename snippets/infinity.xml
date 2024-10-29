@@ -18,10 +18,6 @@
   <!-- manifest -->
   <project path="manifest" name="manifest" remote="infinity" />
 
-  <!-- general -->
-  <project path="art" name="art" remote="infinity" />
-  <project path="bionic" name="bionic" remote="infinity" />
-
   <!-- build -->
   <project path="build/make" name="build" groups="pdk" remote="infinity" >
     <copyfile src="core/root.mk" dest="Makefile" />
@@ -50,8 +46,12 @@
   <project path="frameworks/opt/telephony" name="frameworks_opt_telephony" groups="pdk" remote="infinity" />
   <project path="frameworks/libs/systemui" name="frameworks_libs_systemui" groups="pdk-cw-fs,pdk-fs,sysui-studio" remote="infinity" />
 
+  <!-- general -->
+  <project path="art" name="art" remote="infinity" />
+  <project path="bionic" name="bionic" remote="infinity" />
+
   <!-- hardware -->
-  <project path="hardware/infinity/interfaces" name="hardware_infinity_interfaces" remote="infinity" />
+  <project path="hardware/lineage/interfaces" name="hardware_infinity_interfaces" remote="infinity" />
 
   <!-- packages -->
   <project path="packages/apps/Dialer" name="packages_apps_Dialer" remote="infinity" />
@@ -69,6 +69,9 @@
   <project path="packages/services/Telecomm" name="packages_services_Telecomm" groups="pdk-cw-fs,pdk-fs" remote="infinity" />
   <project path="packages/services/OmniJaws" name="packages_services_OmniJaws" remote="infinity" />
 
+  <!-- prebuilts -->
+  <project path="prebuilts/infinity-sdk" name="prebuilts_infinity-sdk" remote="infinity" />
+
   <!-- system -->
   <project path="system/core" name="system_core" remote="infinity" />
   <project path="system/libhidl" name="system_libhidl" remote="infinity" />
@@ -82,7 +85,4 @@
   <project path="vendor/bcr" name="Chaitanyakm/vendor_bcr" remote="github" revision="main" />
   <project path="vendor/infinity" name="vendor_infinity" remote="infinity" />
   <project path="vendor/qcom/opensource/usb" name="vendor_qcom_opensource_usb" groups="qcom,kailua-vendor" remote="infinity" />
-
-  <!-- prebuilts -->
-   <project path="prebuilts/infinity-sdk" name="prebuilts_infinity-sdk" remote="infinity" />
 </manifest>

@@ -43,6 +43,27 @@ TARGET_BUILD_GOOGLE_TELEPHONY := true/false (Default: false)
 # Whether the compiled package ships Moto Calculator irrespective VANILLA or GAPPS:
 USE_MOTO_CALCULATOR := true/false (Default: false)
 ```
+About Phone Definitions
+---------------
+```bash
+# Add these as PRODUCT_SYSTEM_PROPERTIES (system.prop), You may use utilities as libinit if configuring for unified devices
+ro.infinity.soc
+ro.infinity.battery
+ro.infinity.display
+ro.infinity.camera
+
+# Example Defintions
+ro.infinity.soc=Snapdragon 8 Gen 2
+ro.infinity.battery=5500 mAh
+ro.infinity.display=1264 x 2780, 120 Hz
+ro.infinity.camera=50MP + 8MP + 2MP
+
+# Also declare your Device Name with appropirate sepolicy rule(Take libinit in use if Unified)
+ro.product.marketname
+
+# Example Defintion
+ro.product.marketname=OnePlus 12R 5G
+```
 ## Setup Environment:
 1. Navigate to the root directory of Project Infinity X:
     ```bash

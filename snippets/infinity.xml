@@ -68,6 +68,7 @@
   <project path="packages/services/DeviceAsWebcam" name="packages_services_DeviceAsWebcam" groups="pdk-cw-fs,pdk-fs" remote="infinity" />
   <project path="packages/services/Telecomm" name="packages_services_Telecomm" groups="pdk-cw-fs,pdk-fs" remote="infinity" />
   <project path="packages/services/OmniJaws" name="packages_services_OmniJaws" remote="infinity" />
+  <project path="packages/modules/Connectivity" name="packages_modules_Connectivity" groups="pdk-cw-fs,pdk-fs" remote="infinity" />
 
   <!-- prebuilts -->
   <project path="prebuilts/infinity-sdk" name="prebuilts_infinity-sdk" remote="infinity" />

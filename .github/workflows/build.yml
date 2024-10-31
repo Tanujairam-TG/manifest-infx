@@ -1,0 +1,108 @@
+name: Build GSI and Custom ROM
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-gsi:
+    runs-on: ubuntu-latest
+
+    env:
+      INFINITY_BUILD_TYPE: "UNOFFICIAL"
+      INFINITY_MAINTAINER: "GitHubActionsBot"
+      TARGET_SUPPORTS_BLUR: "false"
+      WITH_GAPPS: "true"
+      TARGET_BUILD_GOOGLE_TELEPHONY: "true"
+      USE_MOTO_CALCULATOR: "false"
+      DEVICE_CODENAME: "sky"
+      BUILD_TYPE: "userdebug"
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+        with:
+          lfs: false  # Disable LFS for regular files
+
+      - name: Cache repo sync files
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/repo
+          key: repo-${{ github.sha }}
+          restore-keys: |
+            repo-
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-11-jdk python3 git git-lfs curl
+          git lfs install
+
+      - name: Initialize and Sync repo (Shallow Clone)
+        run: |
+          repo init --depth=1 --no-repo-verify --git-lfs -u https://github.com/ProjectInfinity-X/manifest -b 15 -g default,-mips,-darwin,-notdefault
+          repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j$(nproc --all)
+
+      - name: Setup environment
+        run: |
+          cd path/to/source
+          . build/envsetup.sh
+
+      - name: Choose GSI configuration
+        run: |
+          lunch infinity_generic_x86-userdebug
+
+      - name: Build GSI
+        run: |
+          mka bacon
+        # Clean up unnecessary output directories to save space
+        # Adjust path to remove intermediate build files
+        continue-on-error: true
+        shell: bash
+
+      - name: Clean up GSI Intermediate Files
+        run: |
+          rm -rf out/target/product/generic_x86/obj/ # Clear object files to save space
+          rm -rf out/soong/obj/ # Additional cleanup if necessary
+
+      - name: Choose Custom ROM configuration for Sky with GAPPS
+        run: |
+          lunch infinity_${{ env.DEVICE_CODENAME }}-${{ env.BUILD_TYPE }}
+
+      - name: Build Custom ROM with GAPPS for Sky
+        run: |
+          mka bacon
+        continue-on-error: true
+
+      - name: Clean up Custom ROM Intermediate Files
+        run: |
+          rm -rf out/target/product/${{ env.DEVICE_CODENAME }}/obj/
+          rm -rf out/soong/obj/
+
+      - name: Upload GSI build to GitHub Releases
+        if: success()
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          tag: "GSI-${{ github.run_number }}"
+          name: "GSI Build ${{ github.run_number }}"
+          body: "Automated GSI build for Project Infinity X with latest changes"
+          draft: false
+          prerelease: false
+          files: out/target/product/generic_x86/*.img
+
+      - name: Upload Custom ROM for Sky to GitHub Releases
+        if: success()
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          tag: "CustomROM-Sky-${{ github.run_number }}"
+          name: "Custom ROM with GAPPS for Sky ${{ github.run_number }}"
+          body: "Automated Custom ROM build with GAPPS for device 'Sky' on Project Infinity X"
+          draft: false
+          prerelease: false
+          files: out/target/product/${{ env.DEVICE_CODENAME }}/*.zip

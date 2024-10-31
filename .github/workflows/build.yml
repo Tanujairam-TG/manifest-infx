@@ -52,7 +52,7 @@ jobs:
           cd path/to/source
           . build/envsetup.sh
 
-      - name: Choose GSI configuration
+      - name: Choose GSI configurations
         run: |
           lunch infinity_generic_x86-userdebug
 

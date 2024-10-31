@@ -3,10 +3,7 @@ name: Build GSI and Custom ROM
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - '*' # Trigger on changes to any branch
 
 jobs:
   build-gsi:
@@ -14,7 +11,7 @@ jobs:
 
     env:
       INFINITY_BUILD_TYPE: "UNOFFICIAL"
-      INFINITY_MAINTAINER: "GitHubActionsBot"
+      INFINITY_MAINTAINER: "Tanujairam"
       TARGET_SUPPORTS_BLUR: "false"
       WITH_GAPPS: "true"
       TARGET_BUILD_GOOGLE_TELEPHONY: "true"
@@ -28,14 +25,6 @@ jobs:
         with:
           lfs: false  # Disable LFS for regular files
 
-      - name: Cache repo sync files
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/repo
-          key: repo-${{ github.sha }}
-          restore-keys: |
-            repo-
-
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -44,30 +33,31 @@ jobs:
 
       - name: Initialize and Sync repo (Shallow Clone)
         run: |
-          repo init --depth=1 --no-repo-verify --git-lfs -u https://github.com/ProjectInfinity-X/manifest -b 15 -g default,-mips,-darwin,-notdefault
-          repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j$(nproc --all)
+          # Ensure repo binary is available
+          curl https://storage.googleapis.com/git-repo-downloads/repo > ~/repo
+          chmod a+x ~/repo
+          # Initialize and sync
+          ~/repo init --depth=1 --no-repo-verify --git-lfs -u https://github.com/ProjectInfinity-X/manifest -b 15 -g default,-mips,-darwin,-notdefault
+          ~/repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j$(nproc --all)
 
       - name: Setup environment
         run: |
-          cd path/to/source
+          cd path/to/source  # Adjust this path if necessary
           . build/envsetup.sh
 
-      - name: Choose GSI configurations
+      - name: Choose GSI configuration
         run: |
           lunch infinity_generic_x86-userdebug
 
       - name: Build GSI
         run: |
           mka bacon
-        # Clean up unnecessary output directories to save space
-        # Adjust path to remove intermediate build files
-        continue-on-error: true
-        shell: bash
+        continue-on-error: true  # Optional, adjust based on tolerance for errors
 
       - name: Clean up GSI Intermediate Files
         run: |
-          rm -rf out/target/product/generic_x86/obj/ # Clear object files to save space
-          rm -rf out/soong/obj/ # Additional cleanup if necessary
+          rm -rf out/target/product/generic_x86/obj/
+          rm -rf out/soong/obj/
 
       - name: Choose Custom ROM configuration for Sky with GAPPS
         run: |

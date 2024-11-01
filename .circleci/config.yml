@@ -1,0 +1,64 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/android:latest
+    working_directory: ~/build
+
+    steps:
+      - checkout  # Checks out your repository's source code
+
+      - run:
+          name: Install Dependencies
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y openjdk-11-jdk git-core curl unzip repo bc git-lfs
+            # Initialize Git LFS if needed
+            git lfs install
+
+      - run:
+          name: Set Up Repo Tool
+          command: |
+            mkdir ~/bin
+            curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+            chmod a+x ~/bin/repo
+            export PATH=~/bin:$PATH
+
+      - run:
+          name: Initialize and Sync Repo
+          command: |
+            repo init --depth=1 --no-repo-verify --git-lfs -u https://github.com/ProjectInfinity-X/manifest -b 15 -g default,-mips,-darwin,-notdefault
+            repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j$(nproc --all)
+
+      - run:
+          name: Setup Environment
+          command: |
+            cd path/to/source  # Adjust path if needed
+            . build/envsetup.sh
+
+      - run:
+          name: Configure Build for Sky
+          command: |
+            export INFINITY_BUILD_TYPE=UNOFFICIAL
+            export INFINITY_MAINTAINER="Tanujairam"  # Replace with your name if you're the maintainer
+            export TARGET_SUPPORTS_BLUR=false
+            export WITH_GAPPS=false
+            export TARGET_BUILD_GOOGLE_TELEPHONY=false
+            export USE_MOTO_CALCULATOR=false
+            lunch infinity_sky-userdebug  # Configure for "sky" device
+
+      - run:
+          name: Start Compilation
+          command: |
+            mka bacon  # Start the build process
+
+      - store_artifacts:
+          path: out/target/product/sky  # Adjust based on actual output path
+          destination: build_artifacts
+
+workflows:
+  version: 2
+  build_workflow:
+    jobs:
+      - build
